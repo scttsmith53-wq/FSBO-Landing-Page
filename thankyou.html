@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Free FSBO Guide | HomeSmart</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:    #ca1938;
+    --red2:   #e01f3d;
+    --dark:   #161019;
+    --dark2:  #1e1422;
+    --white:  #ffffff;
+    --offwhite: #f7f5f8;
+    --w80:    rgba(255,255,255,0.80);
+    --w50:    rgba(255,255,255,0.50);
+    --border: rgba(202,25,56,0.28);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--offwhite); color: var(--dark); line-height: 1.6; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--dark);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--red);
+    gap: 16px;
+  }
+  .topbar-brand { display: flex; align-items: center; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .topbar-agent { display: flex; align-items: center; gap: 10px; }
+  .topbar-tag   { font-size: 0.65rem; color: var(--w50); white-space: nowrap; }
+  .topbar-headshot {
+    width: 40px; height: 40px; border-radius: 50%;
+    object-fit: cover; border: 2px solid var(--red); flex-shrink: 0;
+  }
+  .topbar-login {
+    font-size: 0.7rem; font-weight: 600; color: var(--w50);
+    text-decoration: none; border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 3px; padding: 7px 16px; white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .topbar-login:hover { color: var(--white); border-color: rgba(255,255,255,0.5); }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--dark);
+    padding: 72px 32px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(202,25,56,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+  .success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(202,25,56,0.15);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red2);
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.18;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+  }
+  .hero h1 em { color: var(--red2); font-style: normal; }
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--w80);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── CTA BUTTONS ── */
+  .hero-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--red);
+    color: var(--white);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 18px 36px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--red2); }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--white);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 17px 32px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.30);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--white); }
+  .hero-note { font-size: 0.68rem; color: var(--w50); margin-top: 8px; }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    background: var(--offwhite);
+    padding: 56px 32px 0;
+    text-align: center;
+  }
+  .section-eyebrow {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--red); margin-bottom: 12px;
+  }
+  .section-eyebrow::before, .section-eyebrow::after {
+    content: ''; flex: 1; max-width: 48px; height: 1px; background: var(--red); opacity: 0.4;
+  }
+  .section-title {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 800;
+    color: var(--dark);
+    max-width: 520px;
+    margin: 0 auto 8px;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+  }
+  .section-sub {
+    font-size: 0.9rem;
+    color: #666;
+    max-width: 440px;
+    margin: 0 auto 40px;
+    font-weight: 300;
+  }
+
+  /* ── CALENDAR ── */
+  .calendar-wrap {
+    background: var(--offwhite);
+    padding: 0 32px 80px;
+  }
+  .calendar-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid #e8e4ec;
+    border-top: 4px solid var(--red);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .calendar-inner iframe {
+    width: 100%;
+    border: none;
+    display: block;
+    min-height: 700px;
+  }
+
+  /* ── WHAT'S IN THE GUIDE ── */
+  .guide-preview {
+    background: var(--dark);
+    padding: 72px 32px;
+    text-align: center;
+  }
+  .guide-preview .section-title { color: var(--white); }
+  .guide-preview .section-sub   { color: var(--w50); }
+  .guide-chapters {
+    max-width: 720px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    text-align: left;
+  }
+  .chapter {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .chapter-num {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--red);
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+  .chapter-title { font-size: 0.82rem; font-weight: 600; color: var(--white); line-height: 1.4; }
+
+  /* ── WEBINAR STRIP ── */
+  .webinar-strip {
+    background: var(--dark2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+  }
+  .webinar-strip-inner {
+    max-width: 840px; margin: 0 auto;
+    display: flex; align-items: center;
+    justify-content: center; gap: 24px; flex-wrap: wrap; text-align: center;
+  }
+  .webinar-strip-text { font-size: 0.85rem; color: var(--w50); max-width: 520px; line-height: 1.6; }
+  .webinar-strip-link {
+    font-size: 0.82rem; font-weight: 700; color: var(--red2);
+    text-decoration: none; white-space: nowrap; transition: color 0.2s;
+  }
+  .webinar-strip-link:hover { color: var(--white); }
+
+  /* ── FOOTER ── */
+  .footer { background: var(--dark); padding: 44px 32px; text-align: center; border-top: 3px solid var(--red); }
+  .footer-brand { display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .footer-legal { font-size: 0.62rem; color: var(--w50); line-height: 1.8; max-width: 700px; margin: 0 auto; }
+  .ehl { display: inline-flex; align-items: center; gap: 5px; font-size: 0.58rem; color: var(--w50); margin-top: 14px; }
+
+  @media (max-width: 600px) {
+    .hero-buttons { flex-direction: column; }
+    .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+    .topbar { padding: 0 16px; }
+    .topbar-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <svg height="34" viewBox="0 0 504 95.23" xmlns="http://www.w3.org/2000/svg" aria-label="HomeSmart" style="display:block;">
+      <defs><style>.cls-1{fill:#ca1938;}.cls-2{fill:#ffffff;}</style></defs>
+      <g><path class="cls-2" d="M380.36,94.55v-15.81h8.77c2.25,0,3.73.65,4.75,1.72.82.87,1.31,2.01,1.31,3.27,0,2.03-1.26,3.61-3.2,4.46l3.7,6.37h-3.97l-3.2-5.81h-4.7v5.81h-3.46ZM383.82,81.67v4.14h5.67c1.21,0,2.2-.87,2.2-2.08,0-.53-.19-1.02-.56-1.38-.56-.61-1.26-.68-1.89-.68h-5.42Z"/><path class="cls-2" d="M413.4,87.79h-5.84v3.78h10.27v2.98h-13.73v-15.81h13.17v3h-9.71v3.08h5.84v2.98Z"/><path class="cls-2" d="M431.3,78.74h2.98l7.34,15.81h-3.8l-1.45-3.34h-7.31l-1.43,3.34h-3.66l7.34-15.81ZM430.23,88.47h4.94l-2.4-5.59h-.15l-2.4,5.59Z"/><path class="cls-2" d="M452.71,78.74v12.83h9.3v2.98h-12.76v-15.81h3.46Z"/><path class="cls-2" d="M466.18,78.74h14.92v3h-5.71v12.81h-3.46v-12.81h-5.74v-3Z"/><path class="cls-2" d="M502.7,78.74l-6.27,8.6v7.22h-3.49v-7.22l-6.3-8.6h4.31l3.85,5.5,3.83-5.5h4.07Z"/></g>
+      <g>
+        <g><g><polygon class="cls-1" points="39.15 0 39.15 26.06 28.26 36.95 28.26 10.89 39.15 0"/><polygon class="cls-1" points="39.15 41.45 39.15 67.41 28.26 78.3 28.26 52.34 39.15 41.45"/></g><g><polygon class="cls-1" points="0 39.15 17.36 56.51 17.36 21.79 0 39.15"/><polygon class="cls-1" points="50.04 21.79 50.04 56.51 67.4 39.15 50.04 21.79"/></g></g>
+        <g><polygon class="cls-1" points="93.77 41.13 104.69 41.13 109.94 35.87 93.77 35.87 93.77 21.41 85.4 21.41 85.4 56.94 93.77 56.94 93.77 41.13"/><rect class="cls-1" x="113.91" y="21.41" width="8.24" height="35.53"/></g>
+        <g><path class="cls-2" d="M299.2,35.63h-.07c-4.08-.15-12.56-.46-12.56-5.45,0-5.96,8.14-6.6,11.64-6.6,7.06,0,12.38,2.69,14.47,3.94l2.01-3.01c-3.18-1.96-8.67-4.24-16.9-4.24-12,0-16.26,5.8-16.26,10.76,0,7.4,9.58,9.12,17.61,9.26,8.24.23,12.42,2.5,12.42,6.74,0,4.76-4.85,7.6-12.99,7.6s-14.03-3.58-16.96-5.79l-2.27,3.01c3.93,2.67,10.21,6.16,19.59,6.16,12.29,0,17.89-5.84,17.89-11.26,0-8.93-9.58-10.98-17.61-11.12Z"/><polygon class="cls-2" points="332.35 21.41 326.3 21.41 326.3 56.94 330.21 56.94 330.21 27.15 345.97 49.51 347.14 49.51 361.56 27.4 361.56 56.94 367.11 56.94 367.11 21.41 361.7 21.41 347.66 42.97 347.52 42.78 332.35 21.41"/><path class="cls-2" d="M395.46,21.41l-19.78,35.53h4.57l5.17-9.93h23.29l5.45,9.93h6.2l-19.71-35.53h-5.19ZM387.01,43.92l9.83-18.74.15.27,10.05,18.47h-20.03Z"/><polygon class="cls-2" points="484.86 56.94 490.26 56.94 490.26 24.86 504 24.86 504 21.41 471.26 21.41 471.26 24.86 484.86 24.86 484.86 56.94"/><path class="cls-2" d="M454.29,41.37c7.57-.73,10.26-5.45,10.26-9.63,0-2.51-1.07-5-2.86-6.66-3.48-3.16-6.45-3.67-14.19-3.67h-18.67v35.52h5.54V24.87h14.98c6.4,0,9.52,2.25,9.52,6.88,0,4.26-2.78,6.6-7.82,6.6h-9.18l-3.21,3.24h9.56l2.16,3.18,8.26,12.18h6.31l-10.95-15.54.29-.03Z"/></g>
+        <polygon class="cls-1" points="190.65 31.09 204.29 50.32 204.49 50.6 206.82 50.6 219.44 31.49 219.44 56.94 227.81 56.94 227.81 21.41 219.53 21.41 207.11 40.36 193.53 21.41 184.44 21.41 184.44 56.94 190.65 56.94 190.65 31.09"/>
+        <polygon class="cls-1" points="270.9 26.83 270.9 26.61 270.9 26.61 270.9 21.41 237.87 21.41 237.87 56.94 272.32 56.94 272.32 52.35 272.32 51.69 272.32 51.46 246.24 51.46 246.24 41.34 260.29 41.34 260.29 35.88 246.24 35.88 246.24 26.83 270.9 26.83"/>
+        <path class="cls-1" d="M153.38,20.13c-12.56,0-22.77,8.55-22.77,19.05s10.21,18.99,22.77,18.99,22.77-8.52,22.77-18.99-10.21-19.05-22.77-19.05ZM153.38,53.04c-8.29,0-13.86-5.57-13.86-13.86,0-4.08,1.32-7.56,3.81-10.05,2.49-2.49,5.97-3.81,10.05-3.81,8.17,0,13.66,5.57,13.66,13.86s-5.49,13.86-13.66,13.86Z"/>
+        <g><path class="cls-2" d="M496.4,53.55h3.2v.64h-1.23v2.75h-.74v-2.75h-1.23v-.64Z"/><path class="cls-2" d="M503,56.94v-1.97h-.03l-.95,1.59h-.21l-.95-1.59h-.03v1.97h-.72v-3.39h.71l1.11,1.86h.01l1.11-1.86h.69v3.39h-.75Z"/></g>
+      </g>
+    </svg>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-agent">
+      <img class="topbar-headshot" src="data:image/jpeg;base64,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" alt="Scott Smith">
+      <span class="topbar-tag">Scott Smith · Real Estate Professional · Serving All of Colorado</span>
+    </div>
+    <a href="https://portal.smithapprovesme.com" class="topbar-login">Member Login</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="success-badge">✓ &nbsp;You're all set</div>
+    <h1>Your guide<br><em>is below.</em></h1>
+    <p class="hero-sub">Click the button to download The Colorado FSBO Seller Guide. A copy is also on its way to your inbox. To talk through your specific situation, book a free strategy call below — no obligation.</p>
+    <div class="hero-buttons">
+      <a href="https://drive.google.com/uc?export=download&id=1Lvn4pO3IY9ucNfk--pJXQfm9Fk_CxGeH" target="_blank" class="btn-primary">
+        ⬇ &nbsp;Download Your Free Guide
+      </a>
+      <a href="#book-call" class="btn-secondary">
+        📅 &nbsp;Book a Free Strategy Call
+      </a>
+    </div>
+    <p class="hero-note">A copy is also being sent to your inbox. Not seeing it? Check your spam folder.</p>
+  </div>
+</section>
+
+<!-- CALENDAR SECTION -->
+<div class="section-divider" id="book-call">
+  <div class="section-eyebrow">Optional Next Step</div>
+  <h2 class="section-title">Review your FSBO plan — free, no pressure</h2>
+  <p class="section-sub">20 minutes to walk through your pricing, timeline, and any questions from the guide. No obligation to work with anyone.</p>
+</div>
+<div class="calendar-wrap">
+  <div class="calendar-inner">
+    <iframe
+      src="https://api.leadconnectorhq.com/widget/booking/CAqQrHIxeUZA9nqT73Gv"
+      style="width:100%;border:none;overflow:hidden;min-height:700px;"
+      scrolling="no"
+      id="CAqQrHIxeUZA9nqT73Gv_1782165799920">
+    </iframe>
+  </div>
+</div>
+
+<!-- GUIDE CHAPTERS PREVIEW -->
+<section class="guide-preview">
+  <div class="section-eyebrow" style="justify-content:center;color:var(--red2);">Inside Your Guide</div>
+  <h2 class="section-title" style="color:var(--white);margin-bottom:10px;">8 pages covering the full FSBO process</h2>
+  <p class="section-sub" style="color:var(--w50);margin-bottom:40px;">From pricing to closing — everything you need before you list.</p>
+  <div class="guide-chapters">
+    <div class="chapter"><span class="chapter-num">1</span><span class="chapter-title">What to know before you sell without an agent</span></div>
+    <div class="chapter"><span class="chapter-num">2</span><span class="chapter-title">What FSBO really involves vs. what most sellers picture</span></div>
+    <div class="chapter"><span class="chapter-num">3</span><span class="chapter-title">Price the home without guessing</span></div>
+    <div class="chapter"><span class="chapter-num">4</span><span class="chapter-title">Market for qualified attention — not just views</span></div>
+    <div class="chapter"><span class="chapter-num">5</span><span class="chapter-title">Disclosures, offers, contracts, and deadlines</span></div>
+    <div class="chapter"><span class="chapter-num">6</span><span class="chapter-title">From inspection to closing</span></div>
+    <div class="chapter"><span class="chapter-num">7</span><span class="chapter-title">FSBO mistakes that can cost the most</span></div>
+    <div class="chapter"><span class="chapter-num">8</span><span class="chapter-title">Before you put the sign in the yard — review the plan</span></div>
+  </div>
+</section>
+
+<!-- WEBINAR STRIP -->
+<div class="webinar-strip">
+  <div class="webinar-strip-inner">
+    <span class="webinar-strip-text">Are you a first-time buyer, or do you know someone who is? We offer a free webinar covering everything first-time buyers need to know before they purchase.</span>
+    <a href="https://smithapprovesme.com" class="webinar-strip-link">Register for the Free First-Time Buyer Webinar →</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand">
+    <svg height="28" viewBox="0 0 504 95.23" xmlns="http://www.w3.org/2000/svg" aria-label="HomeSmart" style="display:block;">
+      <defs><style>.fcls-1{fill:#ca1938;}.fcls-2{fill:#ffffff;}</style></defs>
+      <g><path class="fcls-2" d="M380.36,94.55v-15.81h8.77c2.25,0,3.73.65,4.75,1.72.82.87,1.31,2.01,1.31,3.27,0,2.03-1.26,3.61-3.2,4.46l3.7,6.37h-3.97l-3.2-5.81h-4.7v5.81h-3.46ZM383.82,81.67v4.14h5.67c1.21,0,2.2-.87,2.2-2.08,0-.53-.19-1.02-.56-1.38-.56-.61-1.26-.68-1.89-.68h-5.42Z"/><path class="fcls-2" d="M413.4,87.79h-5.84v3.78h10.27v2.98h-13.73v-15.81h13.17v3h-9.71v3.08h5.84v2.98Z"/><path class="fcls-2" d="M431.3,78.74h2.98l7.34,15.81h-3.8l-1.45-3.34h-7.31l-1.43,3.34h-3.66l7.34-15.81ZM430.23,88.47h4.94l-2.4-5.59h-.15l-2.4,5.59Z"/><path class="fcls-2" d="M452.71,78.74v12.83h9.3v2.98h-12.76v-15.81h3.46Z"/><path class="fcls-2" d="M466.18,78.74h14.92v3h-5.71v12.81h-3.46v-12.81h-5.74v-3Z"/><path class="fcls-2" d="M502.7,78.74l-6.27,8.6v7.22h-3.49v-7.22l-6.3-8.6h4.31l3.85,5.5,3.83-5.5h4.07Z"/></g>
+      <g>
+        <g><g><polygon class="fcls-1" points="39.15 0 39.15 26.06 28.26 36.95 28.26 10.89 39.15 0"/><polygon class="fcls-1" points="39.15 41.45 39.15 67.41 28.26 78.3 28.26 52.34 39.15 41.45"/></g><g><polygon class="fcls-1" points="0 39.15 17.36 56.51 17.36 21.79 0 39.15"/><polygon class="fcls-1" points="50.04 21.79 50.04 56.51 67.4 39.15 50.04 21.79"/></g></g>
+        <g><polygon class="fcls-1" points="93.77 41.13 104.69 41.13 109.94 35.87 93.77 35.87 93.77 21.41 85.4 21.41 85.4 56.94 93.77 56.94 93.77 41.13"/><rect class="fcls-1" x="113.91" y="21.41" width="8.24" height="35.53"/></g>
+        <g><path class="fcls-2" d="M299.2,35.63h-.07c-4.08-.15-12.56-.46-12.56-5.45,0-5.96,8.14-6.6,11.64-6.6,7.06,0,12.38,2.69,14.47,3.94l2.01-3.01c-3.18-1.96-8.67-4.24-16.9-4.24-12,0-16.26,5.8-16.26,10.76,0,7.4,9.58,9.12,17.61,9.26,8.24.23,12.42,2.5,12.42,6.74,0,4.76-4.85,7.6-12.99,7.6s-14.03-3.58-16.96-5.79l-2.27,3.01c3.93,2.67,10.21,6.16,19.59,6.16,12.29,0,17.89-5.84,17.89-11.26,0-8.93-9.58-10.98-17.61-11.12Z"/><polygon class="fcls-2" points="332.35 21.41 326.3 21.41 326.3 56.94 330.21 56.94 330.21 27.15 345.97 49.51 347.14 49.51 361.56 27.4 361.56 56.94 367.11 56.94 367.11 21.41 361.7 21.41 347.66 42.97 347.52 42.78 332.35 21.41"/><path class="fcls-2" d="M395.46,21.41l-19.78,35.53h4.57l5.17-9.93h23.29l5.45,9.93h6.2l-19.71-35.53h-5.19ZM387.01,43.92l9.83-18.74.15.27,10.05,18.47h-20.03Z"/><polygon class="fcls-2" points="484.86 56.94 490.26 56.94 490.26 24.86 504 24.86 504 21.41 471.26 21.41 471.26 24.86 484.86 24.86 484.86 56.94"/><path class="fcls-2" d="M454.29,41.37c7.57-.73,10.26-5.45,10.26-9.63,0-2.51-1.07-5-2.86-6.66-3.48-3.16-6.45-3.67-14.19-3.67h-18.67v35.52h5.54V24.87h14.98c6.4,0,9.52,2.25,9.52,6.88,0,4.26-2.78,6.6-7.82,6.6h-9.18l-3.21,3.24h9.56l2.16,3.18,8.26,12.18h6.31l-10.95-15.54.29-.03Z"/></g>
+        <polygon class="fcls-1" points="190.65 31.09 204.29 50.32 204.49 50.6 206.82 50.6 219.44 31.49 219.44 56.94 227.81 56.94 227.81 21.41 219.53 21.41 207.11 40.36 193.53 21.41 184.44 21.41 184.44 56.94 190.65 56.94 190.65 31.09"/>
+        <polygon class="fcls-1" points="270.9 26.83 270.9 26.61 270.9 26.61 270.9 21.41 237.87 21.41 237.87 56.94 272.32 56.94 272.32 52.35 272.32 51.69 272.32 51.46 246.24 51.46 246.24 41.34 260.29 41.34 260.29 35.88 246.24 35.88 246.24 26.83 270.9 26.83"/>
+        <path class="fcls-1" d="M153.38,20.13c-12.56,0-22.77,8.55-22.77,19.05s10.21,18.99,22.77,18.99,22.77-8.52,22.77-18.99-10.21-19.05-22.77-19.05ZM153.38,53.04c-8.29,0-13.86-5.57-13.86-13.86,0-4.08,1.32-7.56,3.81-10.05,2.49-2.49,5.97-3.81,10.05-3.81,8.17,0,13.66,5.57,13.66,13.86s-5.49,13.86-13.66,13.86Z"/>
+        <g><path class="fcls-2" d="M496.4,53.55h3.2v.64h-1.23v2.75h-.74v-2.75h-1.23v-.64Z"/><path class="fcls-2" d="M503,56.94v-1.97h-.03l-.95,1.59h-.21l-.95-1.59h-.03v1.97h-.72v-3.39h.71l1.11,1.86h.01l1.11-1.86h.69v3.39h-.75Z"/></g>
+      </g>
+    </svg>
+  </div>
+  <p class="footer-legal">
+    Scott Smith · Real Estate Professional · HomeSmart · Serving All of Colorado<br>
+    Scott Smith is also a licensed Mortgage Loan Originator · NMLS #2244351 · Citywide Home Loans · NMLS #2611<br><br>
+    This guide is for educational purposes only and does not constitute legal, financial, or real estate brokerage advice. Real estate services are subject to a written listing agreement and applicable Colorado Real Estate Commission rules.
+  </p>
+  <div class="ehl">⊜ Equal Housing Opportunity</div>
+</footer>
+
+<script src="https://api.leadconnectorhq.com/js/form_embed.js" type="text/javascript"></script>
+</body>
+</html>
