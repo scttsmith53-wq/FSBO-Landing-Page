@@ -377,6 +377,8 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
     .fsbo-grid2 { grid-template-columns: 1fr; }
   }
 </style>
+<!-- Cloudflare Turnstile (bot protection) -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 <!-- TOP BAR -->
@@ -438,6 +440,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           <input type="checkbox" id="consent" />
           <span>I agree to receive the guide and follow-up communication from Scott Smith / HomeSmart by email, phone, and text. No obligation; reply STOP to opt out.</span>
         </label>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADtjWzK3UFn5hjXO" data-theme="dark" style="margin:12px 0;"></div>
         <button type="button" class="fsbo-submit" id="submitBtn">Send Me the Free Guide &rarr;</button>
         <p class="fsbo-err" id="err"></p>
       </div>
@@ -570,6 +573,8 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
         var consent = document.getElementById('consent').checked;
         if (!first || !email || email.indexOf('@') < 0) { return showErr('Please enter your name and a valid email.'); }
         if (!consent) { return showErr('Please check the box to receive your guide.'); }
+        var tsToken = (document.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
+        if (!tsToken) { return showErr('Please complete the verification below.'); }
         btn.disabled = true; btn.textContent = 'Sending…';
         var er = document.getElementById('err'); if (er) er.style.display = 'none';
         var payload = {
@@ -578,7 +583,8 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           email: email, phone: phone,
           source: 'fsbo',
           interests: ['fsbo_guide'],
-          consent: true
+          consent: true,
+          cf_turnstile_token: tsToken
         };
         try {
           var res = await fetch(REGISTER_URL, {
