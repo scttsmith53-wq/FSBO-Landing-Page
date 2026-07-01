@@ -427,8 +427,8 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
     </div>
     <div class="form-card" id="register">
       <div class="form-tag">Free Download</div>
-      <div class="form-title">Where should we send your guide?</div>
-      <p class="form-sub">Delivered to your inbox instantly. No spam, no obligation.</p>
+      <div class="form-title">Get instant access to your free guide</div>
+      <p class="form-sub">Download it in your private hub the moment you sign up. No spam, no obligation.</p>
       <div id="formView">
         <div class="fsbo-grid2">
           <input type="text" id="firstName" placeholder="First name" autocomplete="given-name" />
@@ -441,12 +441,12 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           <span>I agree to receive the guide and follow-up communication from Scott Smith / HomeSmart by email, phone, and text. No obligation; reply STOP to opt out.</span>
         </label>
         <div class="cf-turnstile" data-sitekey="0x4AAAAAADtjWzK3UFn5hjXO" data-theme="dark" style="margin:12px 0;"></div>
-        <button type="button" class="fsbo-submit" id="submitBtn">Send Me the Free Guide &rarr;</button>
+        <button type="button" class="fsbo-submit" id="submitBtn">Get Instant Access &rarr;</button>
         <p class="fsbo-err" id="err"></p>
       </div>
       <div id="successView" class="fsbo-success">
-        <h3>Your guide is on the way! 📬</h3>
-        <p>Check your email for the FSBO guide and a link to your private resource hub.</p>
+        <h3>You're in! ✅</h3>
+        <p>Taking you to your private hub, where you can download the guide right now…</p>
       </div>
     </div>
   </div>
@@ -519,7 +519,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
   <div class="trust-inner">
     <div class="trust-badge">🔒 Your info is never sold or shared</div>
     <div class="trust-divider"></div>
-    <div class="trust-badge">📬 Guide delivered instantly by email</div>
+    <div class="trust-badge">⚡ Instant access in your private hub</div>
     <div class="trust-divider"></div>
     <div class="trust-badge">🏡 No obligation to hire anyone</div>
     <div class="trust-divider"></div>
@@ -576,7 +576,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
         if (!consent) { return showErr('Please check the box to receive your guide.'); }
         var tsToken = (document.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
         if (!tsToken) { return showErr('Please complete the verification below.'); }
-        btn.disabled = true; btn.textContent = 'Sending…';
+        btn.disabled = true; btn.textContent = 'One moment…';
         var er = document.getElementById('err'); if (er) er.style.display = 'none';
         var payload = {
           full_name: (first + ' ' + last).trim(),
@@ -599,7 +599,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           document.getElementById('successView').style.display = 'block';
           setTimeout(function () { window.location.href = PORTAL_FSBO + '?name=' + encodeURIComponent(first); }, 1800);
         } catch (e) {
-          btn.disabled = false; btn.textContent = 'Send Me the Free Guide →';
+          btn.disabled = false; btn.textContent = 'Get Instant Access →';
           showErr('Something went wrong. Please try again or call Scott directly.');
         }
       });
