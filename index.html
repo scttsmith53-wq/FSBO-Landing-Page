@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6FYJ9YLVZD"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-6FYJ9YLVZD');</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free FSBO Guide: What Every Colorado Home Seller Should Know | HomeSmart</title>
@@ -602,6 +605,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           });
           if (!res.ok) { throw new Error('Registration failed'); }
           if (window.fbq) { fbq('track', 'Lead', { content_name: 'FSBO Guide' }); }
+          if (window.gtag) { gtag('event', 'generate_lead', { method: 'fsbo_form' }); }
           document.getElementById('formView').style.display = 'none';
           document.getElementById('successView').style.display = 'block';
           setTimeout(function () {
@@ -697,6 +701,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
       var res=await fetch(REGISTER_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY_REG,'Authorization':'Bearer '+SUPABASE_KEY_REG},body:JSON.stringify({full_name:(fn+' '+ln).trim(),first_name:fn,last_name:ln,email:em,phone:ph,source:CHAT_SOURCE,interests:['fsbo_guide','chat'],consent:true,consent_text:CONSENT_TEXT,cf_turnstile_token:tsTok})});
       if(!res.ok)throw new Error('reg');
       if(window.fbq)try{fbq('track','Lead',{content_name:'FSBO Chat'});}catch(e){}
+      if(window.gtag)try{gtag('event','generate_lead',{method:'fsbo_chat'});}catch(e){}
       localStorage.setItem('bsc_captured','1'); captured=true;
       var c=document.getElementById('bsc-cap'); if(c&&c.parentNode)c.parentNode.removeChild(c);
       if(row)row.style.display=''; if(disc)disc.style.display='';
