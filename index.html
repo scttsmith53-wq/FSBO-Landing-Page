@@ -426,6 +426,13 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
       </ul>
     </div>
     <div class="form-card" id="register">
+      <!-- Social proof: rotating review + 5-star badge -->
+      <div style="max-width:560px;margin:0 auto 16px;padding:14px 18px;border:1px solid rgba(201,150,43,.35);border-radius:14px;background:#0a1526;text-align:center;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:#c9962b;font-weight:700;"><span style="letter-spacing:2px;">★★★★★</span><span><strong>5.0</strong> · 25+ Google reviews</span></div>
+        <blockquote id="smTtQuote" style="margin:9px 0 5px;font-size:14px;line-height:1.5;color:#eef1f5;font-style:italic;transition:opacity .4s;min-height:42px;">&nbsp;</blockquote>
+        <div id="smTtName" style="font-size:12px;color:#c9962b;font-weight:700;transition:opacity .4s;">&nbsp;</div>
+      </div>
+      <script>(function(){var r=[["A true professional at every single level. 5 Stars +++","Mario B."],["Not your typical sales guy — he truly works for you.","Matt M."],["Above and beyond. Answered every question. TOP NOTCH!","Barry P."],["Educated, helpful, responsive — look no further.","Hannah L."],["Made the whole process so easy. He truly works for you.","Bridgit M."],["One of the best I've ever worked with. He'll do you right!","Reginald H."]];var i=0,q=document.getElementById("smTtQuote"),n=document.getElementById("smTtName");function s(){q.textContent="“"+r[i][0]+"”";n.textContent="— "+r[i][1];}s();setInterval(function(){q.style.opacity=0;n.style.opacity=0;setTimeout(function(){i=(i+1)%r.length;s();q.style.opacity=1;n.style.opacity=1;},400);},4500);})();</script>
       <div class="form-tag">Free Download</div>
       <div class="form-title">Get instant access to your free guide</div>
       <p class="form-sub">Download it in your private hub the moment you sign up. No spam, no obligation.</p>
@@ -620,7 +627,11 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
   var ENDPOINT = "https://qfhfuesnjfuwfujhvgpa.supabase.co/functions/v1/assistant-chat";
   var SOURCE = "fsbo";
   var msgs = [{role:"assistant", content:"Hi! Selling on your own? Ask me anything — pricing, screening buyers, contracts, or the free FSBO guide."}];
-  var open=false, sending=false;
+  var REGISTER_URL="https://qfhfuesnjfuwfujhvgpa.supabase.co/functions/v1/hyper-handler";
+  var SUPABASE_KEY_REG="sb_publishable_YnBBmClE9jpZMKN-OMuFWA_NB3oGOMv";
+  var PORTAL="https://portal.smithapprovesme.com/fsbo", TS_SITEKEY="0x4AAAAAADtjWzK3UFn5hjXO", CHAT_SOURCE="fsbo_chat";
+  var CONSENT_TEXT="I agree to receive the guide and follow-up communication from Scott Smith / HomeSmart by email, phone, and text. No obligation; reply STOP to opt out.";
+  var open=false, sending=false, captured=(localStorage.getItem('bsc_captured')==='1'), userMsgCount=0, captureShown=false, tsWidget=null;
   var root = document.getElementById('bsc-chat');
   var css = document.createElement('style');
   css.textContent = "#bsc-btn{position:fixed;bottom:20px;right:20px;z-index:99999;width:56px;height:56px;border-radius:50%;background:#c9962b;color:#101415;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);font-size:22px;}"+
@@ -633,7 +644,8 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
   "#bsc-foot{border-top:1px solid rgba(255,255,255,.1);padding:10px;}#bsc-row{display:flex;gap:8px;align-items:flex-end;}"+
   "#bsc-in{flex:1;min-height:42px;max-height:110px;resize:none;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#101415;color:#fff;padding:10px;font-size:14px;font-family:inherit;outline:none;}"+
   "#bsc-send{width:42px;height:42px;border:none;border-radius:10px;background:#c9962b;color:#101415;cursor:pointer;font-size:16px;}#bsc-send:disabled{opacity:.5;}"+
-  "#bsc-disc{font-size:10px;color:rgba(232,238,246,.4);margin:6px 2px 0;line-height:1.4;}";
+  "#bsc-disc{font-size:10px;color:rgba(232,238,246,.4);margin:6px 2px 0;line-height:1.4;}"+
+  "#bsc-cap{padding:12px;border-top:1px solid rgba(255,255,255,.1);}#bsc-cap h4{color:#c9962b;font-size:13px;margin:0 0 3px;}#bsc-cap p{color:rgba(232,238,246,.6);font-size:11px;margin:0 0 8px;line-height:1.4;}#bsc-cap input[type=text],#bsc-cap input[type=email],#bsc-cap input[type=tel]{width:100%;box-sizing:border-box;margin:0 0 6px;padding:9px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:#101415;color:#fff;font-size:13px;}#bsc-cap .cons{display:flex;gap:6px;font-size:10px;color:rgba(232,238,246,.6);line-height:1.35;margin:4px 0 8px;}#bsc-cap-btn{width:100%;padding:10px;border:none;border-radius:8px;background:#c9962b;color:#101415;font-weight:700;cursor:pointer;font-size:13px;}#bsc-cap-btn:disabled{opacity:.5;}#bsc-skip{display:block;text-align:center;color:rgba(232,238,246,.45);font-size:11px;margin-top:8px;cursor:pointer;background:none;border:none;width:100%;}#bsc-cap .err{color:#f87171;font-size:11px;margin-top:4px;}#bsc-portal{display:block;box-sizing:border-box;text-align:center;margin:10px;padding:10px;border-radius:8px;background:#c9962b;color:#101415;font-weight:700;text-decoration:none;font-size:13px;}";
   document.head.appendChild(css);
   root.innerHTML = '<button id="bsc-btn" aria-label="Chat">&#128172;</button>'+
     '<div id="bsc-panel"><div id="bsc-head"><div class="k">Buy &amp; Sell with Confidence</div><div class="t">Ask me anything</div></div>'+
@@ -641,15 +653,57 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
     '<button id="bsc-send">&#10148;</button></div>'+
     '<div id="bsc-disc">Educational only &mdash; not a loan approval, rate quote, or commitment to lend. NMLS #2244351 &middot; Equal Housing Opportunity.</div></div></div>';
   var btn=document.getElementById('bsc-btn'),panel=document.getElementById('bsc-panel'),
-      msgsEl=document.getElementById('bsc-msgs'),inEl=document.getElementById('bsc-in'),sendEl=document.getElementById('bsc-send');
+      msgsEl=document.getElementById('bsc-msgs'),inEl=document.getElementById('bsc-in'),sendEl=document.getElementById('bsc-send'),footEl=document.getElementById('bsc-foot');
   function render(){msgsEl.innerHTML='';msgs.forEach(function(m){var d=document.createElement('div');d.className='bsc-m '+(m.role==='user'?'bsc-u':'bsc-a');d.textContent=m.content;msgsEl.appendChild(d);});
     if(sending){var t=document.createElement('div');t.className='bsc-m bsc-a';t.textContent='typing…';t.style.opacity=.6;msgsEl.appendChild(t);}msgsEl.scrollTop=msgsEl.scrollHeight;}
   btn.onclick=function(){open=!open;panel.classList.toggle('open',open);btn.innerHTML=open?'&#10005;':'&#128172;';if(open)render();};
-  async function send(){var text=(inEl.value||'').trim();if(!text||sending)return;msgs.push({role:'user',content:text});inEl.value='';sending=true;render();
+  async function send(){var text=(inEl.value||'').trim();if(!text||sending)return;msgs.push({role:'user',content:text});userMsgCount++;inEl.value='';sending=true;render();
     try{var res=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:SOURCE,messages:msgs})});
       var d=await res.json().catch(function(){return{};});msgs.push({role:'assistant',content:d.reply||'Sorry — please try again, or book a one-on-one with Scott.'});}
     catch(e){msgs.push({role:'assistant',content:'Connection hiccup — please try again.'});}
-    sending=false;render();}
+    sending=false;render();if(!captured&&!captureShown&&userMsgCount>=1)setTimeout(showCapture,700);}
+  function showCapture(){
+    if(captured||captureShown)return; captureShown=true;
+    var row=document.getElementById('bsc-row'); if(row)row.style.display='none';
+    var disc=document.getElementById('bsc-disc'); if(disc)disc.style.display='none';
+    var cap=document.createElement('div'); cap.id='bsc-cap';
+    cap.innerHTML='<h4>Want Scott to follow up personally?</h4><p>Share a few details &mdash; your free FSBO guide unlocks in your portal and Scott can reach out with a plan for your sale.</p>'+
+      '<input id="bsc-fn" type="text" placeholder="First name" autocomplete="given-name">'+
+      '<input id="bsc-ln" type="text" placeholder="Last name" autocomplete="family-name">'+
+      '<input id="bsc-em" type="email" placeholder="Email" autocomplete="email">'+
+      '<input id="bsc-ph" type="tel" placeholder="Phone (for a quick follow-up)" autocomplete="tel">'+
+      '<label class="cons"><input id="bsc-cons" type="checkbox"><span>'+CONSENT_TEXT+'</span></label>'+
+      '<div class="cf-turnstile" id="bsc-ts"></div>'+
+      '<button id="bsc-cap-btn">Get personalized help</button>'+
+      '<div class="err" id="bsc-cap-err" style="display:none;"></div>'+
+      '<button id="bsc-skip">Maybe later &mdash; keep chatting</button>';
+    footEl.appendChild(cap); msgsEl.scrollTop=msgsEl.scrollHeight;
+    try{ if(window.turnstile)tsWidget=window.turnstile.render('#bsc-ts',{sitekey:TS_SITEKEY}); }catch(e){}
+    document.getElementById('bsc-skip').onclick=function(){var c=document.getElementById('bsc-cap');if(c&&c.parentNode)c.parentNode.removeChild(c);if(row)row.style.display='';if(disc)disc.style.display='';};
+    document.getElementById('bsc-cap-btn').onclick=submitCapture;
+  }
+  async function submitCapture(){
+    var g=function(id){return (document.getElementById(id).value||'').trim();};
+    var fn=g('bsc-fn'),ln=g('bsc-ln'),em=g('bsc-em'),ph=g('bsc-ph');
+    var cons=document.getElementById('bsc-cons').checked, err=document.getElementById('bsc-cap-err');
+    function fail(m){err.textContent=m;err.style.display='block';}
+    if(!fn||!em||em.indexOf('@')<1)return fail('Please enter your name and a valid email.');
+    if(!cons)return fail('Please check the box so Scott can reach out.');
+    var tsTok=(document.querySelector('#bsc-cap [name=cf-turnstile-response]')||{}).value||'';
+    if(!tsTok&&window.turnstile&&tsWidget!=null){try{tsTok=window.turnstile.getResponse(tsWidget);}catch(e){}}
+    if(!tsTok)return fail('Please complete the verification, then try again.');
+    var b=document.getElementById('bsc-cap-btn'); b.disabled=true; b.textContent='Saving…';
+    try{
+      var res=await fetch(REGISTER_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY_REG,'Authorization':'Bearer '+SUPABASE_KEY_REG},body:JSON.stringify({full_name:(fn+' '+ln).trim(),first_name:fn,last_name:ln,email:em,phone:ph,source:CHAT_SOURCE,interests:['fsbo_guide','chat'],consent:true,consent_text:CONSENT_TEXT,cf_turnstile_token:tsTok})});
+      if(!res.ok)throw new Error('reg');
+      if(window.fbq)try{fbq('track','Lead',{content_name:'FSBO Chat'});}catch(e){}
+      localStorage.setItem('bsc_captured','1'); captured=true;
+      var c=document.getElementById('bsc-cap'); if(c&&c.parentNode)c.parentNode.removeChild(c);
+      if(row)row.style.display=''; if(disc)disc.style.display='';
+      var pl=document.createElement('a'); pl.id='bsc-portal'; pl.href=PORTAL+'?email='+encodeURIComponent(em)+'&firstName='+encodeURIComponent(fn); pl.textContent='Open my portal & download the guide →'; footEl.insertBefore(pl,document.getElementById('bsc-row'));
+      msgs.push({role:'assistant',content:"You're all set, "+fn+"! I've saved your info so Scott can follow up, and your free guide is ready in your portal. Ask me anything else in the meantime."}); render();
+    }catch(e){ b.disabled=false; b.textContent='Get personalized help'; fail('Something went wrong. Please try again, or call Scott directly.'); }
+  }
   sendEl.onclick=send;
   inEl.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
 })();
