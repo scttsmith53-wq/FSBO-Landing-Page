@@ -597,7 +597,14 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           if (window.fbq) { fbq('track', 'Lead', { content_name: 'FSBO Guide' }); }
           document.getElementById('formView').style.display = 'none';
           document.getElementById('successView').style.display = 'block';
-          setTimeout(function () { window.location.href = PORTAL_FSBO + '?name=' + encodeURIComponent(first); }, 1800);
+          setTimeout(function () {
+            window.location.href = PORTAL_FSBO
+              + '?email=' + encodeURIComponent(email)
+              + '&firstName=' + encodeURIComponent(first)
+              + '&lastName=' + encodeURIComponent(last)
+              + '&phone=' + encodeURIComponent(phone)
+              + '&source=fsbo';
+          }, 1800);
         } catch (e) {
           btn.disabled = false; btn.textContent = 'Get Instant Access →';
           showErr('Something went wrong. Please try again or call Scott directly.');
