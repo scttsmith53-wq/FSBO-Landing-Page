@@ -22,16 +22,20 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
 <!-- End Meta Pixel Code -->
 <style>
   :root {
-    --red:    #ca1938;
-    --red2:   #e01f3d;
-    --dark:   #161019;
-    --dark2:  #1e1422;
+    /* Brand: navy + gold base, red kept as an accent. --red now holds the gold
+       primary so existing usages become gold; --accent holds the red pop. */
+    --red:    #c9962b;
+    --red2:   #dcae4a;
+    --accent:  #ca1938;
+    --accent2: #e01f3d;
+    --dark:   #061426;
+    --dark2:  #0d1a2e;
     --white:  #ffffff;
-    --offwhite: #f7f5f8;
+    --offwhite: #f7f6f2;
     --w80:    rgba(255,255,255,0.80);
     --w50:    rgba(255,255,255,0.50);
     --w20:    rgba(255,255,255,0.20);
-    --border: rgba(202,25,56,0.28);
+    --border: rgba(201,150,43,0.30);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -118,10 +122,10 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: var(--red2);
+    color: var(--accent);
     margin-bottom: 22px;
   }
-  .hero-eyebrow::before { content: ''; display: block; width: 20px; height: 2px; background: var(--red); }
+  .hero-eyebrow::before { content: ''; display: block; width: 20px; height: 2px; background: var(--accent); }
   .hero h1 {
     font-size: clamp(1.9rem, 4vw, 2.8rem);
     font-weight: 800;
@@ -130,7 +134,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
     letter-spacing: -0.5px;
     margin-bottom: 20px;
   }
-  .hero h1 em { color: var(--red2); font-style: normal; }
+  .hero h1 em { color: var(--accent2); font-style: normal; }
   .hero-rule { width: 40px; height: 3px; background: var(--red); margin-bottom: 20px; border-radius: 2px; }
   .hero-sub {
     font-size: 0.98rem;
@@ -408,6 +412,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
       <img class="topbar-headshot" src="data:image/jpeg;base64,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" alt="Scott Smith">
       <span class="topbar-tag">Scott Smith · Real Estate Professional · Serving All of Colorado</span>
     </div>
+    <a href="tel:+19705280874" style="white-space:nowrap;margin-right:10px;padding:7px 13px;border-radius:5px;border:1px solid var(--red);color:var(--red);font-weight:700;font-size:0.72rem;letter-spacing:1px;text-decoration:none;">Call (970) 528-0874</a>
     <a href="https://portal.smithapprovesme.com" class="topbar-login">Member Login</a>
   </div>
 </header>
@@ -458,7 +463,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
         </select>
         <label class="fsbo-consent">
           <input type="checkbox" id="consent" />
-          <span>I agree to receive the guide and follow-up communication from Scott Smith / HomeSmart by email, phone, and text. No obligation; reply STOP to opt out.</span>
+          <span>I agree to receive the guide and follow-up communication from Scott Smith / HomeSmart by email, phone, and text, including via automated technology. Consent is not a condition of any purchase. No obligation; message and data rates may apply; reply STOP to opt out.</span>
         </label>
         <button type="button" class="fsbo-submit" id="submitBtn">Get Instant Access &rarr;</button>
         <p class="fsbo-err" id="err"></p>
@@ -571,7 +576,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
   </div>
   <p class="footer-legal">
     Scott Smith · Real Estate Professional · HomeSmart · Serving All of Colorado<br>
-    Scott Smith is also a licensed Mortgage Loan Originator · NMLS #2244351 · Citywide Home Loans · NMLS #2611<br><br>
+    Scott Smith is also a licensed Mortgage Loan Originator · NMLS #2244351 · Citywide Home Mortgage · NMLS #2611. This is not a commitment to lend or a guarantee of program eligibility.<br><br>
     This guide is for educational purposes only and does not constitute legal, financial, or real estate brokerage advice. Real estate services are subject to a written listing agreement and applicable Colorado Real Estate Commission rules. Contact information collected through this form will be used to deliver the requested materials and, with your consent, for follow-up communication. You may opt out at any time.
   </p>
   <div class="ehl">⊜ Equal Housing Opportunity</div>
