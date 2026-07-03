@@ -381,7 +381,6 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
   }
 </style>
 <!-- Cloudflare Turnstile (bot protection) -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 <!-- TOP BAR -->
@@ -461,7 +460,6 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           <input type="checkbox" id="consent" />
           <span>I agree to receive the guide and follow-up communication from Scott Smith / HomeSmart by email, phone, and text. No obligation; reply STOP to opt out.</span>
         </label>
-        <div class="cf-turnstile" data-sitekey="0x4AAAAAADtjWzK3UFn5hjXO" data-theme="dark" style="margin:12px 0;"></div>
         <button type="button" class="fsbo-submit" id="submitBtn">Get Instant Access &rarr;</button>
         <p class="fsbo-err" id="err"></p>
       </div>
@@ -598,7 +596,6 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
         if (!first || !email || email.indexOf('@') < 0) { return showErr('Please enter your name and a valid email.'); }
         if (!consent) { return showErr('Please check the box to receive your guide.'); }
         var tsToken = (document.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
-        if (!tsToken) { return showErr('Please complete the verification below.'); }
         btn.disabled = true; btn.textContent = 'One moment…';
         var er = document.getElementById('err'); if (er) er.style.display = 'none';
         var payload = {
@@ -694,7 +691,6 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
       '<input id="bsc-rb" type="text" placeholder="Referred by (optional)" autocomplete="off">'+
       '<select id="bsc-rc" style="width:100%;box-sizing:border-box;margin:0 0 6px;padding:9px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:#101415;color:#fff;font-size:13px;"><option value="">How did you hear about us?</option><option>Google search</option><option>Facebook or Instagram</option><option>Friend or family</option><option>Real estate agent</option><option>Another website</option><option>Zillow / Realtor.com</option><option>Other</option></select>'+
       '<label class="cons"><input id="bsc-cons" type="checkbox"><span>'+CONSENT_TEXT+'</span></label>'+
-      '<div class="cf-turnstile" id="bsc-ts"></div>'+
       '<button id="bsc-cap-btn">Get personalized help</button>'+
       '<div class="err" id="bsc-cap-err" style="display:none;"></div>'+
       '<button id="bsc-skip">Maybe later &mdash; keep chatting</button>';
@@ -712,7 +708,6 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
     if(!cons)return fail('Please check the box so Scott can reach out.');
     var tsTok=(document.querySelector('#bsc-cap [name=cf-turnstile-response]')||{}).value||'';
     if(!tsTok&&window.turnstile&&tsWidget!=null){try{tsTok=window.turnstile.getResponse(tsWidget);}catch(e){}}
-    if(!tsTok)return fail('Please complete the verification, then try again.');
     var b=document.getElementById('bsc-cap-btn'); b.disabled=true; b.textContent='Saving…';
     try{
       var res=await fetch(REGISTER_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY_REG,'Authorization':'Bearer '+SUPABASE_KEY_REG},body:JSON.stringify({full_name:(fn+' '+ln).trim(),first_name:fn,last_name:ln,email:em,phone:ph,source:CHAT_SOURCE,interests:['fsbo_guide','chat'],referred_by:rb,referral_channel:rc,consent:true,consent_text:CONSENT_TEXT,cf_turnstile_token:tsTok})});
