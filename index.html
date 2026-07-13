@@ -236,6 +236,15 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
   }
   /* ── CUSTOM FORM (engine-connected) ── */
   .fsbo-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  /* Tap-to-answer seller qualifiers (mirrors the DPA page's quiz). */
+  .q { margin-bottom: 14px; }
+  .qlabel { display:block; font-family: Manrope, sans-serif; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:800; color:#c9962b; margin-bottom:7px; }
+  .qhint { font-size:11px; color: rgba(255,255,255,.5); margin-top:6px; line-height:1.45; }
+  .opts { display:flex; flex-wrap:wrap; gap:8px; }
+  .opt { background:#101415; border:1px solid rgba(255,255,255,.18); color:#eef1f5; border-radius:999px;
+         padding:9px 14px; font-size:13px; font-family:inherit; cursor:pointer; transition:all .15s; }
+  .opt:hover { border-color:#c9962b; }
+  .opt.sel { background:rgba(201,150,43,.16); border-color:#c9962b; color:#e8b95a; font-weight:600; }
   .form-card input[type=text], .form-card input[type=email], .form-card input[type=tel] {
     width:100%; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color: var(--white);
     border-radius:5px; padding:12px 13px; font-size:0.9rem; font-family:inherit; margin-bottom:10px;
@@ -486,8 +495,42 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
       <script>(function(){var r=[["A true professional at every single level. 5 Stars +++","Mario B."],["Not your typical sales guy — he truly works for you.","Matt M."],["Above and beyond. Answered every question. TOP NOTCH!","Barry P."],["Educated, helpful, responsive — look no further.","Hannah L."],["Made the whole process so easy. He truly works for you.","Bridgit M."],["One of the best I've ever worked with. He'll do you right!","Reginald H."]];var i=0,q=document.getElementById("smTtQuote"),n=document.getElementById("smTtName");function s(){q.textContent="“"+r[i][0]+"”";n.textContent="— "+r[i][1];}s();setInterval(function(){q.style.opacity=0;n.style.opacity=0;setTimeout(function(){i=(i+1)%r.length;s();q.style.opacity=1;n.style.opacity=1;},400);},4500);})();</script>
       <div class="form-tag">Free Download</div>
       <div class="form-title">Get instant access to your free guide</div>
-      <p class="form-sub">Download it in your private hub the moment you sign up. No spam, no obligation.</p>
+      <p class="form-sub">Three quick questions so Scott can send the right version &mdash; then it&rsquo;s yours.</p>
       <div id="formView">
+        <!-- SELLER qualifiers. Deliberately NOT a credit question: these are
+             homeowners trying to sell, not borrowers. Credit is irrelevant to
+             them and asking would be invasive and cost conversions.
+             What actually sorts a FSBO lead is TIMELINE and whether they've
+             already been sitting on the market. hyper-handler maps `timeline`
+             to timeline: tags and `price_range` onto the contact. -->
+        <div class="q">
+          <label class="qlabel">1. When are you hoping to sell?</label>
+          <div class="opts" data-field="timeline">
+            <button type="button" class="opt" data-val="now">ASAP</button>
+            <button type="button" class="opt" data-val="soon">1&ndash;3 months</button>
+            <button type="button" class="opt" data-val="later">3&ndash;6 months</button>
+            <button type="button" class="opt" data-val="exploring">Just researching</button>
+          </div>
+        </div>
+        <div class="q">
+          <label class="qlabel">2. Is it on the market right now?</label>
+          <div class="opts" data-field="listed">
+            <button type="button" class="opt" data-val="not_listed">Not yet</button>
+            <button type="button" class="opt" data-val="listed_new">Listed &mdash; under 30 days</button>
+            <button type="button" class="opt" data-val="listed_stale">Listed &mdash; 30+ days, no luck</button>
+          </div>
+        </div>
+        <div class="q">
+          <label class="qlabel">3. Roughly what do you think it&rsquo;s worth?</label>
+          <div class="opts" data-field="price_range">
+            <button type="button" class="opt" data-val="under_400k">Under $400k</button>
+            <button type="button" class="opt" data-val="400_600k">$400k&ndash;$600k</button>
+            <button type="button" class="opt" data-val="600_800k">$600k&ndash;$800k</button>
+            <button type="button" class="opt" data-val="over_800k">$800k+</button>
+            <button type="button" class="opt" data-val="not_sure">Not sure</button>
+          </div>
+          <div class="qhint">Ballpark is fine &mdash; no appraisal, no obligation.</div>
+        </div>
         <div class="fsbo-grid2">
           <input type="text" id="firstName" placeholder="First name" autocomplete="given-name" />
           <input type="text" id="lastName" placeholder="Last name" autocomplete="family-name" />
@@ -652,6 +695,23 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
     var REGISTER_URL = "https://qfhfuesnjfuwfujhvgpa.supabase.co/functions/v1/hyper-handler";
     var SUPABASE_KEY = "sb_publishable_YnBBmClE9jpZMKN-OMuFWA_NB3oGOMv"; // public key — safe in the browser
     var PORTAL_FSBO = "https://portal.smithapprovesme.com/fsbo";
+    // Button-group single-select for the seller qualifiers.
+    // PRODUCT PRINCIPLE: we SEGMENT, we do not SCREEN. No answer is required
+    // and no answer disqualifies anyone — a seller "just researching" today is
+    // a listing in six months. The questions sort leads and give Meta a quality
+    // signal; they never filter someone out.
+    var picks = { timeline: '', listed: '', price_range: '' };
+    document.querySelectorAll('.opts').forEach(function (group) {
+      var field = group.getAttribute('data-field');
+      group.querySelectorAll('.opt').forEach(function (b) {
+        b.addEventListener('click', function () {
+          group.querySelectorAll('.opt').forEach(function (x) { x.classList.remove('sel'); });
+          b.classList.add('sel');
+          picks[field] = b.getAttribute('data-val');
+        });
+      });
+    });
+
     function showErr(m) { var e = document.getElementById('err'); if (e) { e.textContent = m; e.style.display = 'block'; } }
     var btn = document.getElementById('submitBtn');
     if (btn) {
@@ -671,9 +731,21 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
         var attr = (window.getAttribution ? window.getAttribution() : {});
         // Shared ID between the browser pixel and the server-side CAPI event.
         var eventId = 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
-        // A FSBO seller who leaves a phone number is worth far more than an
-        // email-only guide download. Give Meta something to optimize toward.
-        var leadValue = phone ? 60 : 20;
+
+        // SELLER lead value. The single hottest FSBO lead is someone who has
+        // been sitting on the market for 30+ days with no offers — they are
+        // actively failing and know it. Someone "just researching" who hasn't
+        // listed is a year out. Meta bids toward what we call valuable, so the
+        // scoring has to reflect that, not just count form-fills.
+        var leadValue = 20;
+        if (picks.timeline === 'now') leadValue += 50;
+        else if (picks.timeline === 'soon') leadValue += 30;
+        else if (picks.timeline === 'later') leadValue += 10;
+        if (picks.listed === 'listed_stale') leadValue += 40;   // failing, motivated
+        else if (picks.listed === 'listed_new') leadValue += 15;
+        if (phone) leadValue += 25;                              // callable
+        var isQualified = (picks.timeline === 'now' || picks.timeline === 'soon') && !!phone;
+
         var payload = {
           full_name: (first + ' ' + last).trim(),
           first_name: first, last_name: last,
@@ -682,7 +754,12 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           interests: ['fsbo_guide'],
           referred_by: referredBy,
           referral_channel: referralChannel,
+          // hyper-handler maps `timeline` to timeline: tags and stores price_range.
+          timeline: picks.timeline,
+          price_range: picks.price_range,
+          listing_status: picks.listed,
           lead_value: leadValue,
+          qualified: isQualified,
           // TOP-LEVEL: hyper-handler reads body.fbp / body.fbc / body.event_id.
           event_id: eventId,
           fbp: attr.fbp || '',
@@ -710,8 +787,22 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
               content_name: 'FSBO Guide',
               value: leadValue,
               currency: 'USD',
-              has_phone: !!phone
+              has_phone: !!phone,
+              timeline: picks.timeline || 'unknown',
+              listing_status: picks.listed || 'unknown',
+              price_range: picks.price_range || 'unknown'
             }, { eventID: eventId });
+            // Motivated + callable sellers. Do NOT switch the campaign's
+            // optimization event to this until it has real weekly volume.
+            if (isQualified) {
+              fbq('trackCustom', 'QualifiedLead', {
+                content_name: 'FSBO Guide',
+                value: leadValue,
+                currency: 'USD',
+                timeline: picks.timeline,
+                listing_status: picks.listed || 'unknown'
+              }, { eventID: eventId + '-q' });
+            }
           }
           if (window.gtag) { gtag('event', 'generate_lead', { method: 'fsbo_form', value: leadValue }); }
           document.getElementById('formView').style.display = 'none';
