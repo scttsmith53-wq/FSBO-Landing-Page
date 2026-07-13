@@ -23,6 +23,44 @@ fbq('init','879134155809312');fbq('track','PageView');
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel Code -->
+
+<!-- Attribution capture: UTM params + click IDs + Meta cookies.
+     Persists for the session so the value survives the funnel.
+     Exposes window.getAttribution() for form + chat payloads.
+     _fbp / _fbc are required for Conversions API event matching later. -->
+<script>
+(function(){
+  var KEY = 'sm_attr';
+  function fromUrl(){
+    var p = new URLSearchParams(window.location.search), out = {};
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){
+      var v = p.get(k); if (v) out[k] = v;
+    });
+    var fbclid = p.get('fbclid'); if (fbclid) out.fbclid = fbclid;
+    var gclid  = p.get('gclid');  if (gclid)  out.gclid  = gclid;
+    return out;
+  }
+  function cookie(n){
+    var m = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+  }
+  var fresh = fromUrl(), stored = {};
+  try { stored = JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch(e){}
+  var attr = Object.keys(fresh).length ? fresh : stored;
+  try { sessionStorage.setItem(KEY, JSON.stringify(attr)); } catch(e){}
+
+  window.getAttribution = function(){
+    var a = {};
+    Object.keys(attr).forEach(function(k){ a[k] = attr[k]; });
+    a.fbp = cookie('_fbp') || '';
+    a.fbc = cookie('_fbc') || '';
+    if (!a.fbc && a.fbclid) { a.fbc = 'fb.1.' + Date.now() + '.' + a.fbclid; }
+    a.landing_page = window.location.hostname + window.location.pathname;
+    a.referrer = document.referrer || '';
+    return a;
+  };
+})();
+</script>
 <style>
   :root {
     /* Brand: navy + gold base, red kept as an accent. --red now holds the gold
@@ -630,6 +668,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
         var tsToken = (document.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
         btn.disabled = true; btn.textContent = 'One moment…';
         var er = document.getElementById('err'); if (er) er.style.display = 'none';
+        var attr = (window.getAttribution ? window.getAttribution() : {});
         var payload = {
           full_name: (first + ' ' + last).trim(),
           first_name: first, last_name: last,
@@ -638,6 +677,7 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           interests: ['fsbo_guide'],
           referred_by: referredBy,
           referral_channel: referralChannel,
+          attribution: attr,
           consent: true,
           cf_turnstile_token: tsToken
         };
@@ -697,7 +737,150 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
   document.head.appendChild(css);
   root.innerHTML = '<button id="bsc-btn" aria-label="Chat">&#128172;</button>'+
     '<div id="bsc-panel"><div id="bsc-head"><div class="k">Buy &amp; Sell with Confidence</div><div class="t">Ask me anything</div></div>'+
-    '<div id="bsc-msgs"></div><div id="bsc-foot"><div id="bsc-row"><textarea id="bsc-in" rows="1" placeholder="Type your question&hellip;"></textarea>'+
+    '<div id="bsc-msgs"></div>'+
+    '<div id="bsc-cap" style="display:none;">'+
+      '<h4>Want the free FSBO guide?</h4>'+
+      '<p>Drop your info and I\'ll send it over — plus answers to anything else you ask.</p>'+
+      '<input type="text"  id="bsc-cap-first" placeholder="First name" autocomplete="given-name">'+
+      '<input type="email" id="bsc-cap-email" placeholder="Email address" autocomplete="email">'+
+      '<input type="tel"   id="bsc-cap-phone" placeholder="Phone (so Scott can follow up)" autocomplete="tel">'+
+      '<label class="cons"><input type="checkbox" id="bsc-cap-consent"><span>'+CONSENT_TEXT+'</span></label>'+
+      '<button id="bsc-cap-btn">Send me the guide</button>'+
+      '<button id="bsc-skip">No thanks, just chatting</button>'+
+      '<div class="err" id="bsc-cap-err" style="display:none;"></div>'+
+    '</div>'+
+    '<a id="bsc-portal" href="'+PORTAL+'" target="_blank" rel="noopener" style="display:none;">Open your FSBO hub &rarr;</a>'+
+    '<div id="bsc-foot"><div id="bsc-row"><textarea id="bsc-in" rows="1" placeholder="Type your question&hellip;"></textarea>'+
     '<button id="bsc-send">&#10148;</button></div>'+
     '<div id="bsc-disc">Educational only &mdash; not a loan approval, rate quote, or commitment to lend. NMLS #2244351 &middot; Equal Housing Opportunity.</div></div></div>';
+
+  var btn     = document.getElementById('bsc-btn'),
+      panel   = document.getElementById('bsc-panel'),
+      msgsEl  = document.getElementById('bsc-msgs'),
+      inEl    = document.getElementById('bsc-in'),
+      sendEl  = document.getElementById('bsc-send'),
+      capEl   = document.getElementById('bsc-cap'),
+      capBtn  = document.getElementById('bsc-cap-btn'),
+      capErr  = document.getElementById('bsc-cap-err'),
+      skipEl  = document.getElementById('bsc-skip'),
+      portalEl= document.getElementById('bsc-portal');
+
+  function render(){
+    msgsEl.innerHTML = '';
+    msgs.forEach(function(m){
+      var d = document.createElement('div');
+      d.className = 'bsc-m ' + (m.role === 'user' ? 'bsc-u' : 'bsc-a');
+      d.textContent = m.content;
+      msgsEl.appendChild(d);
+    });
+    if (sending){
+      var t = document.createElement('div');
+      t.className = 'bsc-m bsc-a';
+      t.textContent = 'typing…';
+      t.style.opacity = .6;
+      msgsEl.appendChild(t);
+    }
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  btn.onclick = function(){
+    open = !open;
+    panel.classList.toggle('open', open);
+    btn.innerHTML = open ? '&#10005;' : '&#128172;';
+    if (open) render();
+  };
+
+  // After a couple of real questions, ask for contact info once.
+  function maybeShowCapture(){
+    if (captured || captureShown) return;
+    if (userMsgCount < 2) return;
+    captureShown = true;
+    capEl.style.display = 'block';
+    capEl.scrollIntoView({ block: 'nearest' });
+  }
+
+  skipEl.onclick = function(){ capEl.style.display = 'none'; };
+
+  capBtn.onclick = async function(){
+    var first   = (document.getElementById('bsc-cap-first').value || '').trim();
+    var email   = (document.getElementById('bsc-cap-email').value || '').trim();
+    var phone   = (document.getElementById('bsc-cap-phone').value || '').trim();
+    var consent = document.getElementById('bsc-cap-consent').checked;
+    function err(m){ capErr.textContent = m; capErr.style.display = 'block'; }
+    if (!first || !email || email.indexOf('@') < 0) { return err('Please enter your name and a valid email.'); }
+    if (!consent) { return err('Please check the box so Scott can send it.'); }
+    capErr.style.display = 'none';
+    capBtn.disabled = true; capBtn.textContent = 'Sending…';
+
+    var attr = (window.getAttribution ? window.getAttribution() : {});
+    try {
+      var res = await fetch(REGISTER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY_REG,
+          'Authorization': 'Bearer ' + SUPABASE_KEY_REG
+        },
+        body: JSON.stringify({
+          full_name: first,
+          first_name: first,
+          last_name: '',
+          email: email,
+          phone: phone,
+          source: CHAT_SOURCE,
+          interests: ['fsbo_guide'],
+          attribution: attr,
+          consent: true,
+          cf_turnstile_token: ''
+        })
+      });
+      if (!res.ok) { throw new Error('Registration failed'); }
+
+      captured = true;
+      try { localStorage.setItem('bsc_captured', '1'); } catch(e){}
+      if (window.fbq)  { fbq('track', 'Lead', { content_name: 'FSBO Guide (chat)' }); }
+      if (window.gtag) { gtag('event', 'generate_lead', { method: 'fsbo_chat' }); }
+
+      capEl.style.display = 'none';
+      portalEl.style.display = 'block';
+      msgs.push({ role: 'assistant', content: "Sent! Check your email for the guide. Anything else you want to know about selling on your own?" });
+      render();
+    } catch(e) {
+      capBtn.disabled = false; capBtn.textContent = 'Send me the guide';
+      err('Something went wrong. Please try again, or call Scott at (970) 528-0874.');
+    }
+  };
+
+  async function send(){
+    var text = (inEl.value || '').trim();
+    if (!text || sending) return;
+    msgs.push({ role: 'user', content: text });
+    userMsgCount++;
+    inEl.value = '';
+    sending = true;
+    render();
+    try {
+      var res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: SOURCE, messages: msgs })
+      });
+      var d = await res.json().catch(function(){ return {}; });
+      msgs.push({ role: 'assistant', content: d.reply || 'Sorry — please try again, or book a one-on-one with Scott.' });
+    } catch(e) {
+      msgs.push({ role: 'assistant', content: 'Connection hiccup — please try again.' });
+    }
+    sending = false;
+    render();
+    maybeShowCapture();
+  }
+
+  sendEl.onclick = send;
+  inEl.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+  });
+})();
+</script>
+</body>
+</html>
   var btn=document.getElementById('b
