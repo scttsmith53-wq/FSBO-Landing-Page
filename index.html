@@ -669,6 +669,11 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
         btn.disabled = true; btn.textContent = 'One moment…';
         var er = document.getElementById('err'); if (er) er.style.display = 'none';
         var attr = (window.getAttribution ? window.getAttribution() : {});
+        // Shared ID between the browser pixel and the server-side CAPI event.
+        var eventId = 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+        // A FSBO seller who leaves a phone number is worth far more than an
+        // email-only guide download. Give Meta something to optimize toward.
+        var leadValue = phone ? 60 : 20;
         var payload = {
           full_name: (first + ' ' + last).trim(),
           first_name: first, last_name: last,
@@ -677,6 +682,17 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
           interests: ['fsbo_guide'],
           referred_by: referredBy,
           referral_channel: referralChannel,
+          lead_value: leadValue,
+          // TOP-LEVEL: hyper-handler reads body.fbp / body.fbc / body.event_id.
+          event_id: eventId,
+          fbp: attr.fbp || '',
+          fbc: attr.fbc || '',
+          utm_source: attr.utm_source || '',
+          utm_medium: attr.utm_medium || '',
+          utm_campaign: attr.utm_campaign || '',
+          utm_content: attr.utm_content || '',
+          utm_term: attr.utm_term || '',
+          event_source_url: window.location.href,
           attribution: attr,
           consent: true,
           cf_turnstile_token: tsToken
@@ -688,8 +704,16 @@ src="https://www.facebook.com/tr?id=879134155809312&ev=PageView&noscript=1"/></n
             body: JSON.stringify(payload)
           });
           if (!res.ok) { throw new Error('Registration failed'); }
-          if (window.fbq) { fbq('track', 'Lead', { content_name: 'FSBO Guide' }); }
-          if (window.gtag) { gtag('event', 'generate_lead', { method: 'fsbo_form' }); }
+          // eventID must match the server-side CAPI event_id or Meta double-counts.
+          if (window.fbq) {
+            fbq('track', 'Lead', {
+              content_name: 'FSBO Guide',
+              value: leadValue,
+              currency: 'USD',
+              has_phone: !!phone
+            }, { eventID: eventId });
+          }
+          if (window.gtag) { gtag('event', 'generate_lead', { method: 'fsbo_form', value: leadValue }); }
           document.getElementById('formView').style.display = 'none';
           document.getElementById('successView').style.display = 'block';
           setTimeout(function () {
